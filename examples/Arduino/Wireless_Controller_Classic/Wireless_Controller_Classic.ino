@@ -7,7 +7,7 @@ esp_now_peer_info_t slave;
 
 Classic classic;
 bool isPaired;
-int transmission_Array[18] = {0};
+uint8_t transmission_Array[18] = {0};
 
 void InitESPNow() {
   if (esp_now_init() == ESP_OK) {
@@ -135,10 +135,10 @@ void deletePeer() {
 }
 
 
-void sendData(int *data) {
+void sendData(uint8_t *data) {
   const uint8_t *peer_addr = slave.peer_addr;
-  Serial.print("Sending: "); Serial.println(data);
-  esp_err_t result = esp_now_send(peer_addr, &data, sizeof(data));
+  //Serial.print("Sending: "); Serial.println(data);
+  esp_err_t result = esp_now_send(peer_addr, data, sizeof(data));
   Serial.print("Send Status: ");
   if (result == ESP_OK) {
     Serial.println("Success");
@@ -180,19 +180,32 @@ void setup() {
   isPaired = manageSlave();
   while (!isPaired)
   {
-    ScanForSlaves();
-  }
+ScanForSlave();
+}
 }
 
 void loop() {
-   transmission_Array = {classic.getJoyYLeft(),classic.getJoyXLeft(),classic.getJoyYRight(),classic.getJoyXRight(), 
-                         classic.getTriggerLeft, classic.getTriggerRight, classic.getPadRight, classic.getPadDown,
-                         classic.getPadUp, classic.getPadLeft, classic.getButtonX, classic.getButtonY, classic.getButtonA,
-                         classic.getButtonB, classic.getButtonMinus, classic.getButtonPlus, classic.getButtonZLeft,
-                         classic.getButtonZRight};
-   isPaired = manageSlaves();
+   transmission_Array[0] = classic.getJoyYLeft();
+   transmission_Array[1] = classic.getJoyXLeft();
+   transmission_Array[2] = classic.getJoyYRight();
+   transmission_Array[3] = classic.getJoyXRight(); 
+   transmission_Array[4] = classic.getTriggerLeft();
+   transmission_Array[5] = classic.getTriggerRight();
+   transmission_Array[6] = classic.getPadRight();
+   transmission_Array[7] = classic.getPadDown();
+   transmission_Array[8] = classic.getPadUp();
+   transmission_Array[9] = classic.getPadLeft();
+   transmission_Array[10] = classic.getButtonX();
+   transmission_Array[11] = classic.getButtonY();
+   transmission_Array[12] = classic.getButtonA();
+   transmission_Array[13] = classic.getButtonB();
+   transmission_Array[14] = classic.getButtonMinus();
+   transmission_Array[15] = classic.getButtonPlus();
+   transmission_Array[16] = classic.getButtonZLeft();
+   transmission_Array[17] = classic.getButtonZRight();
+   isPaired = manageSlave();
    if (isPaired)
    {
-    sendData(&transmission_Array);                      
+    sendData(transmission_Array);                      
    }
 }
